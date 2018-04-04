@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>音乐播放器</title>
+    <style>
+      html, body {
+        height: 100%;
+      }
+      ul, li {
+        list-style: none;
+      }
+      * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+      }
+      #app {
+        height: 100%;
+        width: 100%;
+        border: 1px solid #d8d8d8;
+        border-radius: 5px 5px 0px 0px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .app-title {
+        width: 100%;
+        height: 30px;
+        font-size: 14px;
+        color: #fff;
+        background: #0084ff;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        z-index: 100;
+      }
+      .app-title > span {
+        display: inline-block;
+        height: 100%;
+        padding-left: 5px;
+        line-height: 30px;
+      }
+      .app-title .app-menu {
+        float: right;
+        height: 20px;
+        margin-top: 5px;
+        margin-right: 5px;
+        border-radius: 4px;
+      }
+      .app-title .app-menu span {
+        display: inline-block;
+        height: 100%;
+        text-align: center;
+        line-height: 20px;
+        width: 30px;
+        color: #fff;
+        border: 1px solid #d8d8d8;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: .3s all;
+      }
+      .app-title .app-menu span:hover {
+        background: #c9302c;
+        border: 1px solid #c9302c;
+      }
+      .app-title .app-menu span:first-child {
+        line-height: 2px;
+        vertical-align: top;
+        font-size: 18px;
+        font-weight: bolder;
+      }
+      .app-title .app-menu span:first-child {
+        font-size: 18px;
+        font-weight: bolder;
+      }
+      .player {
+        width: 100%;
+        height: 70%;
+        position: relative;
+        background: linear-gradient(#333, #000, #333);
+        padding-top: 30px;
+      }
+      .player:hover .menu {
+        opacity: 1;
+      }
+      .menu {
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 60px;
+        background: rgba(255, 255, 255, .3);
+        text-align: center;
+        overflow: hidden;
+        opacity: 0;
+        transition: .3s all;
+      }
+      .menu-item {
+        display: inline-block;
+        height: 30px;
+        padding: 5px 0px;
+      }
+      .menu-process {
+        height: 20px;
+        width: 100%;
+        padding: 5px 15px 0px 15px;
+      }
+      .menu-process input {
+        display: inline-block;
+        width: 100%;
+      }
+      .menu-item button {
+        display: inline-block;
+        border-radius: 4px;
+        background: #2e96f3;
+        width: 50px;
+        height: 25px;
+        text-align: center;
+        line-height: 25px;
+        color: #fff;
+        margin: 0px 5px;
+        border: 1px solid #0084ff;
+        cursor: pointer;
+      }
+      .top-bar {
+        position: fixed;
+        width: 100%;
+        height: 30px;
+        background: #fff;
+        left: 0px;
+        top: 0px;
+        z-index: 100;
+      }
+      .top-bar-menu {
+        display: inline-block;
+        height: 100%;
+        float: left;
+        padding-left: 5px;
+        background: transparent;
+        text-align: center;
+        line-height: 30px;
+        color: #000;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .list {
+        height: 30%;
+        width: 100%;
+        text-align: center;
+        background: #f0f0f0;
+        position: relative;
+      }
+      .list-menu {
+        height: 35px;
+        width: 100%;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background: #d8d8d8;
+        padding-top: 5px;
+      }
+      .list-menu button {
+        position: relative;
+        display: inline-block;
+        background: #2e96f3;
+        border: 1px solid #0084ff;
+        border-radius: 4px;
+        color: #fff;
+        width: 50px;
+        height: 25px;
+        line-height: 25px;
+        margin: 0px 5px;
+        cursor: pointer;
+        outline: none;
+        overflow: hidden;
+        vertical-align: top;
+      }
+      .list-menu button input[type='file'] {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 50px;
+        height: 25px;
+        font-size: 100px;
+        opacity: 0;
+      }
+      .list-menu select {
+        display: inline-block;
+        height: 25px;
+        line-height: 25px;
+        vertical-align: top;
+      }
+      .list-menu .music-name {
+        padding: 0px 3px;
+        height: 25px;
+        line-height: 25px;
+        cursor: pointer;
+        margin-left: 30px;
+        display: inline-block;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+      .list-content {
+        width: 100%;
+        height: 100%;
+        padding-top: 35px;
+        overflow-y: scroll;
+      }
+      .list-content ul {
+        width: 100%;
+      }
+      .list-content ul li {
+        width: 100%;
+        height: 25px;
+        font-size: 13px;
+        text-align: left;
+        padding-left: 5px;
+        line-height: 25px;
+        transition: .3s all;
+      }
+      .list-content ul li:hover {
+        background: #d8d8d8;
+      }
+      .rect {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border: 1px solid #fff;
+      }
+      .top-bar-content {
+        position: absolute;
+        left: 0px;
+        top: 28px;
+        width: 140px;
+        border: 1px solid #d8d8d8;
+        display: none;
+      }
+      .top-bar-content ul {
+        width: 100%;
+        background: #f0f0f0;
+      }
+      .top-bar-content ul li {
+        width: 100%;
+        padding-left: 5px;
+        height: 30px;
+        line-height: 30px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="top-bar">
+            <span class="top-bar-menu">操作</span>
+        </div>
+        <div class="player">
+            <div class="top-bar-content">
+                <ul>
+                    <li>循环播放</li>
+                </ul>
+            </div>
+            <div class="player-content">
+                <audio id="play" src="">不支持该标签</audio>
+            </div>
+            <div class="menu">
+                <div class="menu-item">
+                    <button class="prev">上一首</button>
+                    <button class="stop">暂停</button>
+                    <button class="end">停止</button>
+                    <button class="next">下一首</button>
+                </div>
+                <div class="menu-process">
+                    <input type="range" min="0" max="" value="0" id="range" />
+                </div>
+            </div>
+        </div>
+        <div class="list">
+            <div class="list-menu">
+                <button>
+                    添加
+                    <input type="file" name="" id="add" />
+                </button>
+                <button>清空</button>
+                <select>
+                    <option value="">第一首</option>
+                </select>
+                <span class="music-name"></span>
+            </div>
+            <div class="list-content">
+                <ul></ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        var f = require('./file.js');
+
+        var topBarMenu = document.getElementsByClassName('top-bar-menu')[0];
+        var topBarContent = document.getElementsByClassName('top-bar-content')[0];
+        var menuItem = document.getElementsByClassName('menu-item')[0];
+        var listContent = document.getElementsByClassName('list-content')[0];
+        var musicName = document.getElementsByClassName('music-name')[0];
+        var musicUl = listContent.getElementsByTagName('ul')[0];
+        var add = document.getElementById('add');
+        var play = document.getElementById('play');
+        var range = document.getElementById('range');
+
+        // 全局数据
+        var baseURL = './resources/app/';
+        var musicArr = []; // 音乐列表
+        var isPlayLoop = false; // 是否循环播放
+        var curProcess = 0; // 当前播放的进度
+        var curMusic = 0; // 当前播放歌曲的索引
+        var isStop = false; // 暂停状态
+
+        // 操作窗口的显示和隐藏
+        topBarMenu.onclick = function() {
+            topBarContent.style.display = 'block';
+        }
+        topBarContent.onmouseenter = function() {
+            topBarContent.style.display = 'block';   
+        }
+        topBarContent.onmouseleave = function() {
+            topBarContent.style.display = 'none';   
+        }
+
+        // 播放界面按钮的点击事件
+        menuItem.onclick = function(e) {
+            switch(e.target.className) {
+                case 'stop':
+                    // 暂停 or 播放
+                    if(play.paused) {
+                        play.play();
+                        e.target.innerHTML = '暂停';
+                    } else {
+                        play.pause();
+                        e.target.innerHTML = '播放';
+                    }
+                    break
+                case 'end':
+                    // 停止
+                    play.currentTime = 0;
+                    play.pause();
+                    break
+                case 'prev':
+                    // 上一首
+                    break
+                case 'next':
+                    // 下一首
+                    break
+            }
+        }
+
+        // 添加音乐
+        add.onchange = function() {
+            f.readFile(this.value, file.name);
+            musicInit();
+        }
+
+        musicUl.onclick = function(e) {
+            if(e.target.tagName.toLowerCase() == 'li') {
+                curMusic = e.target.getAttribute('_idx');
+                play.src = './' + 'music/' + e.target.getAttribute('_name');
+                musicName.innerHTML = e.target.getAttribute('_name');
+                play.play();
+
+                range.setAttribute('max', play.duration);
+            }
+        }
+
+        // 拖动播放时间
+        range.onchange = function() {
+            play.currentTime = this.value;
+        }
+
+        play.ontimeupdate = function() {
+            range.value = play.currentTime;
+        }
+
+        // 点击加载音乐
+        
+
+        // 加载音乐列表
+        var musicInit = function() {
+            var str  = '';
+
+            musicArr = f.findSync('./resources/app/music');
+            musicArr.forEach(function(item, idx) {
+                str += '<li _name="'+ item.slice(20) +'" _idx="'+ idx +'"><span>'+ (idx + 1) +'. </span>'+ item.slice(20) +'</li>';
+            })
+
+            musicUl.innerHTML = str;
+        }
+
+
+        // 默认执行的函数
+        musicInit();
+    </script>
+</body>
+</html>
